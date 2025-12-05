@@ -1,3 +1,4 @@
+
 """
 AI Programming Project – Naive Bayes Classifier
 University of North Dakota – CSCI 384 AI Course | Spring 2025
@@ -10,45 +11,31 @@ Use the provided helper modules (dataset_utils.py and naive_bayes_model.py) to a
 The NaiveBayesContinuous model is based on Artificial Intelligence: A Modern Approach, 4th US edition. 
 GitHub repository: https://github.com/aimacode/aima-python
 """
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
+import dataset_utils as dataset_U
+import naive_bayes_model as NB_model
 
 # ---------------------------------------------------------------
 # STEP 1 [10 pts]: Load the Dataset
 # ---------------------------------------------------------------
-# - Load the CSV file 'spotify_hits.csv' (located in the 'data' folder) into a pandas DataFrame.
-# - Hint: Use the load_dataset() function from dataset_utils.py. Note that you need to import the function first.
-
-# import necessary modules and load the dataset. Hint: src/dataset_utils.py
-# YOUR CODE HERE:
-
-data =  # YOUR CODE HERE
-
-# - Display shape of the DataFrame.
-# - Hint: Use the shape attribute to get the dimensions.
-
-print(f"Data shape: ...") # YOUR CODE HERE
-
-# - Displace the first few rows of the DataFrame to understand its structure.
-# - Hint: Use the head() method to display the first few rows.
-
-# YOUR CODE HERE:
+data = dataset_U.load_dataset("../data/spotify_hits.csv")
+# loding the data set
+print(f"Data shape: {data.shape}")
+print(data.head())
 
 # ---------------------------------------------------------------
 # STEP 2 [10 pts]: Create a Binary Target Column
 # ---------------------------------------------------------------
 # - Create a new column 'hit' from 'popularity'. A song is a hit if popularity ≥ 70; otherwise, it is not a hit.
-# - Hint: Use a lambda function to create the new column. The new column should be binary (0 for not a hit, 1 for a hit).
-
-data['hit'] = # YOUR CODE HERE
+data['hit'] = data['popularity'].apply(lambda x: 1 if x >= 70 else 0)
 
 # - Delete the original 'popularity' column as it is no longer needed.
-# - Hint: Use the drop() method to remove the column.
-
-# YOUR CODE HERE:
-data = # YOUR CODE HERE
+data = data.drop(columns =['popularity'])
 
 # - Display unique values of the 'hit' column to verify the transformation.
-
-# YOUR CODE HERE:
+print(data.head(), "\nSong is a 'hit' if hit = 1, not hit = 0.")
 
 
 # ---------------------------------------------------------------
@@ -57,31 +44,23 @@ data = # YOUR CODE HERE
 # - Prepare the dataset for training by:
 #   1. Keeping only numeric columns.
 #   2. Removing rows with missing values.
-# - Hint: Use select_dtypes() to select numeric columns and dropna() to remove missing values.
 # - Ensure that the 'hit' column is included in the final DataFrame for target variable.
 
-# YOUR CODE HERE:
 # Select numeric columns and remove missing values.
-data = # YOUR CODE HERE
-data = # YOUR CODE HERE
+data = data.select_dtypes(include='number').dropna()
 
-# - Display shape of the DataFrame.
-# - Hint: Use the shape attribute to get the dimensions.
-
-print(f"data shape: ...") # YOUR CODE HERE
+print(f"data shape: {data.shape}") 
 
 # ---------------------------------------------------------------
 # STEP 4 [10 pts]: Train/Test Split
 # ---------------------------------------------------------------
 # - Split the dataset into training (80%) and testing (20%) sets.
-# - Hint: Use the split_dataset() function from dataset_utils.py.
 
-# YOUR CODE HERE:
 # Split the dataset.
-train_df, test_df = # YOUR CODE HERE
+train_df, test_df = dataset_U.split_dataset(data, 'hit', test_size=0.2)
 
-# - Display the shape of the training and testing DataFrames.
-print(f"Train shape: {...}, Test shape: {...}") # YOUR CODE HERE
+# Display the shape of the training and testing DataFrames.
+print(f"Train shape: {train_df.shape}, Test shape: {test_df.shape}")
 
 # ---------------------------------------------------------------
 # STEP 5 [20 pts]: Train the Naive Bayes Model
@@ -89,11 +68,9 @@ print(f"Train shape: {...}, Test shape: {...}") # YOUR CODE HERE
 # - Wrap the training DataFrame using the DataSet class (from dataset_utils.py) with 'hit' as the target.
 # - Train the NaiveBayesContinuous model (from naive_bayes_model.py) using the training DataSet.
 
-# YOUR CODE HERE:
 # Create the DataSet object and train the model. Don't forget to import the NaiveBayesContinuous class.
-
-train_dataset = # YOUR CODE HERE
-model = # YOUR CODE HERE
+train_dataset = dataset_U.DataSet(train_df, target='hit')
+model = NB_model.NaiveBayesContinuous(train_dataset) 
 
 # ---------------------------------------------------------------
 # STEP 6 [20 pts]: Make Predictions and Evaluate
@@ -101,20 +78,18 @@ model = # YOUR CODE HERE
 # - For each song in the test set, extract its features (all columns except 'hit') as a dictionary.
 # - Use the trained model to predict the label.
 # - Compare the prediction to the true 'hit' value and compute the overall accuracy.
-# - Hint: Use Naive Bayes' formula to calculate the probability of each class given the features.
-# - Accuracy = (Number of correct predictions) / (Total number of predictions)
 
-# YOUR CODE HERE:
 # Write your loop to predict and calculate accuracy.
-correct = # YOUR CODE HERE:
-total = # YOUR CODE HERE:
-for ... in test_df.iterrows():
-    features = # YOUR CODE HERE:
-    true_label = # YOUR CODE HERE:
-    predicted_label = # YOUR CODE HERE:
+correct = 0
+total = 0
+for _, row in test_df.iterrows():
+    features = row.drop(labels='hit').to_dict()
+    true_label = row['hit']
+    predicted_label = model(features)
     if predicted_label == true_label:
         correct += 1
-accuracy = # YOUR CODE HERE:
+    total+=1
+accuracy = correct/total
 print(f"Model accuracy: {accuracy:.2f}")
 
 
@@ -129,15 +104,16 @@ print(f"Model accuracy: {accuracy:.2f}")
 #   C. popularity and tempo
 #   D. artist name and genre
 
+q1_answer = "B"  # YOUR ANSWER HERE
+q1_explanation = "These traits are more predictive of popularity compared to categorical attributes
+like artist name or genre, which are not numeric and appear inconsistently."
+
 # Hint: Correlation analysis can help identify influential features. Sort descending by correlation with the target variable. Target variable has correlation of 1.0.
 
 # YOUR CODE HERE:
-correlations = # YOUR CODE HERE
+correlations = data.corr()['hit'].drop('hit')
 print("Correlation of features with 'hit':")
-print(correlations)
-
-q1_answer = ""  # YOUR ANSWER HERE
-q1_explanation = ""  # YOUR EXPLANATION HERE
+print(correlations.sort_values(ascending=False))
 
 # Q2 [5 pts]: What assumption does the Naive Bayes model make about the input features? Explain your reasoning.
 #   A. They follow a uniform distribution.
@@ -146,8 +122,8 @@ q1_explanation = ""  # YOUR EXPLANATION HERE
 #   D. They are weighted by importance.
 # Hint: Refer to the Naive Bayes assumption. Ref: https://en.wikipedia.org/wiki/Naive_Bayes_classifier
 
-q2_answer = ""  # YOUR ANSWER HERE
-q2_explanation = ""  # YOUR EXPLANATION HERE
+q2_answer = "C"  
+q2_explanation = "The assumption made by the Naive Bayes model is that its independent given the target class, shown in our code the target class being 'hit'." 
 
 # Q3 [5 pts]: What is a likely difference if a decision tree is used instead of Naive Bayes? Explain your reasoning.
 #   A. The model will assume independence of features.
@@ -156,10 +132,10 @@ q2_explanation = ""  # YOUR EXPLANATION HERE
 #   D. The model will always perform worse.
 # Hint: Consider how decision trees work compared to Naive Bayes. Ref: https://en.wikipedia.org/wiki/Decision_tree_learning
 
-q3_answer = ""  # YOUR ANSWER HERE
-q3_explanation = ""  # YOUR EXPLANATION HERE
+q3_answer = "C"  
+q3_explanation = "Decision trees create branches based on conditions so it would create hard splits." 
 
-
+'''
 # ---------------------------------------------------------------
 # BONUS SECTION: Advanced Analysis [10 bonus pts]
 # ---------------------------------------------------------------
