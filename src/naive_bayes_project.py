@@ -18,7 +18,7 @@ import naive_bayes_model as NB_model
 # STEP 1 [10 pts]: Load the Dataset
 # ---------------------------------------------------------------
 data = dataset_U.load_dataset("../data/spotify_hits.csv")
-# loding the data set
+#loading the data set
 print(f"Data shape: {data.shape}")
 print(data.head())
 
@@ -79,7 +79,7 @@ model = NB_model.NaiveBayesContinuous(train_dataset)
 # Write your loop to predict and calculate accuracy.
 correct = 0
 total = 0
-for _, row in test_df.iterrows():
+for whatever, row in test_df.iterrows():
     features = row.drop(labels='hit').to_dict()
     true_label = row['hit']
     predicted_label = model(features)
@@ -102,7 +102,7 @@ print(f"Model accuracy: {accuracy:.2f}")
 #   D. artist name and genre
 
 q1_answer = "B"  # YOUR ANSWER HERE
-q1_explanation = '''These traits are more predictive of popularity compared to others because they are not numerical.'''
+q1_explanation = '''Looking at the results of hits, danceability is the highest correlation of a hit song, and even though acousticness and instrumentalness are low, danceability is so high that it cancels those out.'''
 
 # Hint: Correlation analysis can help identify influential features. Sort descending by correlation with the target variable. Target variable has correlation of 1.0.
 
@@ -119,7 +119,7 @@ print(correlations.sort_values(ascending=False))
 # Hint: Refer to the Naive Bayes assumption. Ref: https://en.wikipedia.org/wiki/Naive_Bayes_classifier
 
 q2_answer = "C"  
-q2_explanation = "The assumption made by the Naive Bayes model is that its independent given the target class, shown in our code the target class being 'hit'." 
+q2_explanation = "The Naive Bayes model has the assumption that its independent given the target class, with the target class being hit." 
 
 # Q3 [5 pts]: What is a likely difference if a decision tree is used instead of Naive Bayes? Explain your reasoning.
 #   A. The model will assume independence of features.
@@ -129,7 +129,7 @@ q2_explanation = "The assumption made by the Naive Bayes model is that its indep
 # Hint: Consider how decision trees work compared to Naive Bayes. Ref: https://en.wikipedia.org/wiki/Decision_tree_learning
 
 q3_answer = "C"  
-q3_explanation = "Decision trees create branches based on conditions so it would create hard splits." 
+q3_explanation = "Decision trees branch because of conditions so it would create hard splits based on things like feature thresholds." 
 
 '''
 # ---------------------------------------------------------------
