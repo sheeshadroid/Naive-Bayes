@@ -1,4 +1,3 @@
-
 """
 AI Programming Project – Naive Bayes Classifier
 University of North Dakota – CSCI 384 AI Course | Spring 2025
@@ -11,9 +10,7 @@ Use the provided helper modules (dataset_utils.py and naive_bayes_model.py) to a
 The NaiveBayesContinuous model is based on Artificial Intelligence: A Modern Approach, 4th US edition. 
 GitHub repository: https://github.com/aimacode/aima-python
 """
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
+
 import dataset_utils as dataset_U
 import naive_bayes_model as NB_model
 
@@ -105,8 +102,7 @@ print(f"Model accuracy: {accuracy:.2f}")
 #   D. artist name and genre
 
 q1_answer = "B"  # YOUR ANSWER HERE
-q1_explanation = "These traits are more predictive of popularity compared to categorical attributes
-like artist name or genre, which are not numeric and appear inconsistently."
+q1_explanation = '''These traits are more predictive of popularity compared to others because they are not numerical.'''
 
 # Hint: Correlation analysis can help identify influential features. Sort descending by correlation with the target variable. Target variable has correlation of 1.0.
 
@@ -168,3 +164,4 @@ bonus_task_1_interpretation = "" # YOUR INTERPRETATION HERE
 best_threshold = 0  # YOUR BEST THRESHOLD HERE
 best_accuracy = 0.0  # YOUR BEST ACCURACY HERE (update after testing)
 print(f"Best threshold: {best_threshold}, Best accuracy: {best_accuracy:.2f}")
+'''

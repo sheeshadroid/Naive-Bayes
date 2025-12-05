@@ -12,7 +12,7 @@ The NaiveBayesContinuous model is based on our course’s GitHub repository
 """
 
 import heapq
-from src.dataset_utils import weighted_sampler, gaussian
+from dataset_utils import weighted_sampler, gaussian
 
 class CountingProbDist:
     """
